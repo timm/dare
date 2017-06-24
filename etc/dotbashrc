@@ -28,8 +28,49 @@ make1() {
     fi
     echo "nothing to do"
 }
-here() {
-    cd $1; basename $PWD;
+_twins() {
+	cat <<-EOF
+	--# $1 : $2
+  ------------------------------------------------------
+  local the=require "config"
+
+	EOF
+}
+twins() { # generate source code and unit test files
+  f=$(basename $1 ".lua")
+  if [ ! -f "${f}.lua" ]; then 
+	   _twins1 $f utilities  > ${f}.lua
+  fi
+  if [ ! -f "${f}ok.lua" ]; then
+	   _twins1 ${f}ok "unit tests for $f" > ${f}ok.lua
+	   git add ${f}ok.lua
+	   cat <<-EOF >> ${f}ok.lua
+     o=require "tests"
+     r=require "random"
+	   x=require "$f"
+  
+     local function _test1()
+        assert(true)
+     end
+	
+     r.seed(1)
+     o.k{_test1}
+     EOF
+  fi
+	git add ${f}.lua
+	git add ${f}ok.lua
+  wc ${f}.lua ${f}ok.lua
+}
+
+local function sym1(i,one)
+  if one ~= IGNORE then
+    i.n = i.n + 1
+    local old = i.counts[one]
+    local new = old and old + 1 or 1
+    i.counts[one] = new
+    if new > i.most then
+      i.most, i.mode = new,one
+end end end
 }
 _c1="\[\033[01;32m\]"
 _c2="\[\033[01;34m\]"
