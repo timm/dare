@@ -1,0 +1,72 @@
+# -*- sh -*-
+
+alias ls='ls -G'
+
+export LESS='-R'
+export LESSOPEN='|$Here/etc/lessfilter %s'
+
+load() {
+ . $Here/etc/dotbashrc
+}
+e() {
+    vim -u $Here/etc/dotvimrc $*
+}
+make() {
+  root=$(git rev-parse --show-toplevel)
+  if [ -n "$root" ]; then
+    ( cd $root; make1 $*)
+  else
+    /usr/bin/make $*
+  fi
+}
+make1() {
+    if [ -f Makefile ]; then
+        /usr/bin/make $*
+        return 0
+    fi
+    echo "nothing to do"
+}
+here() {
+    cd $1; basename $PWD;
+}
+_c1="\[\033[01;32m\]"
+_c2="\[\033[01;34m\]"
+_c3="\[\033[31m\]"
+_c6="\033[33m"
+_c5="\[\033[35m\]$"
+_c0="\[\033[00m\]"
+_c7="[\033]01;19\]"
+red=$(tput setaf 1)
+blue=$(tput setaf 6)
+ltyl=$(tput setaf 11)
+white=$(tput setaf 15)
+here() { cd $1; echo -n "/"; basename "$PWD"; }
+PROMPT_COMMAND='echo  -ne "${_c6}DARE> \033]0; $(here ../..)$(here ..)$(here .)\007";PS1="$_c1$(here ../..)$_c2$(here ..)$_c3$(here .) ${_c6}\!>${_c0}\e[m "'
+  
+echo -n "${ltyl}" 
+
+cat <<'EOF'
+
+ +                       |  Lua Dare v1.00                  
+        _.--"~~ __"-.  . |  https://github.com/timm/dare       
+ .   ,-"     .-~  ~"-\   | 
+   .^       /       ( )  |  A little Lua goes a long way.
+  /    .  Y              |     
+ /      \_j       .      |  "Dream big and dare to fail"
+Y     ( --l__            |   -- Norman Vaughan
+|            "-.                            
+|      (___     \             
+|        .)~-.__/    .    
+l        _)                
+ \      "l                
+  \       \        +       
+   \       ^.             
++   ^.       "-.          
+ .    "-.__     ~-.___,    
+           "--.._____.^  -- Row     
+
+EOF
+echo -n "${white}"
+if [ -f "$HOME/.config/dare/config" ]; then
+  . "$HOME/config/dare/config"
+fi
