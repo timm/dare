@@ -1,38 +1,34 @@
--- /* vim: set filetype=lua ts=2 sw=2 sts=2 expandtab: */
--- Test engine stuff -----------------------
-
-local y,n = 0,0
-local builtin = { "true","math","package","table","coroutine",
-                   "os","io","bit32","string","arg","debug","_VERSION","_G"}
-
-local function member(x,t)
-  for _,y in pairs(t) do
-    if x== y then return true end end
-  return false end
--------------------------------------------------------
-local function rogue()
-  for k,v in pairs( _G ) do
-    if type(v) ~= 'function' then  
-       if not member(k, builtin) then 
-         print("-- Global: " .. k) end end end end
 ------------------------------------------------------
+local pass,fail = 0,0
+
 local function report() 
   print(string.format(
         ":pass %s :fail %s :percentPass %.0f%%",
-         y, n, 100*y/(0.001+y+n))) 
-  rogue() end
+         pass, fail, 100*pass/(0.001+pass+fail))) end
+-------------------------------------------------------
+local builtin = { math=true, package=true, 
+                  table=true, coroutine=true, os=true, 
+                  io=true, bit32=true, string=true, 
+                  arg=true, debug=true, _VERSION=true, _G=true}
+
+local function globals()
+  for k,v in pairs( _G ) do
+    if type(v) ~= 'function' then  
+       if not builtin[k] then 
+         print("-- Global: " .. k) end end end end
 ------------------------------------------------------
 local function tests(t)
   for s,x in pairs(t) do  
     print("# test:", s) 
-    y = y + 1
+    pass = pass + 1
     local passed,err = pcall(x) 
     if not passed then   
-       n = n + 1
-       print("Failure: ".. err) 
-  end end end
+       fail = fail + 1
+       print("Failure: ".. err) end end end
 ------------------------------------------------------
 local function main(t) 
-    if next(t)==nil then report() else tests(t); report() end end
+  if next(t) ~= nil then tests(t) end 
+  report()
+  globals()  end
 ------------------------------------------------------
 return {k=main}
