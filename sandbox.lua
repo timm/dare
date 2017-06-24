@@ -1,10 +1,10 @@
 -- /* vim: set filetype=lua ts=2 sw=2 sts=2 expandtab: */
 
-function _one() 
+local o= require "tests"
+local function _one(     k) 
+  k=1
   print(2)
+  assert(1==2,"impossible")
 end
-Ok= require "ok"
-
-Ok.ok{_one}
-Ok.rogue()
-print(y)
+b=2
+o.k{_one}

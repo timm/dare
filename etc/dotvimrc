@@ -14,6 +14,7 @@ set ttyfast
 set backspace=indent,eol,start
 set laststatus=2
 set splitbelow
+set filetype=lua ts=2 sw=2 sts=2 expandtab
 "ascii mouse
 set mouse=a
 "place buffer name into window title
@@ -59,7 +60,7 @@ Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'croaker/mustang-vim'
 Plugin 'ap/vim-buftabline'
-Plugin 'wolfgangmehner/vim-support'
+"Plugin 'wolfgangmehner/vim-support'
 
 
 " All of your Plugins must be added before the following line

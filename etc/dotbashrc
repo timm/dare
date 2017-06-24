@@ -8,8 +8,9 @@ export LESSOPEN='|$Here/etc/lessfilter %s'
 load() {
  . $Here/etc/dotbashrc
 }
-e() {
+vi() {
     vim -u $Here/etc/dotvimrc $*
+    echo "Done!"
 }
 make() {
   root=$(git rev-parse --show-toplevel)
