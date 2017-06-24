@@ -22,6 +22,7 @@ make() {
 }
 make1() {
     if [ -f Makefile ]; then
+        echo "My making..."
         /usr/bin/make $*
         return 0
     fi
