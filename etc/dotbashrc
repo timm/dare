@@ -80,8 +80,8 @@ red=$(tput setaf 1)
 blue=$(tput setaf 6)
 ltyl=$(tput setaf 11)
 white=$(tput setaf 15)
-here() { cd $1; echo -n "/"; basename "$PWD"; }
-PROMPT_COMMAND='echo  -ne "${_c6}DARE> \033]0; $(here ../..)$(here ..)$(here .)\007";PS1="$_c1$(here ../..)$_c2$(here ..)$_c3$(here .) ${_c6}\!>${_c0}\e[m "'
+here() { cd $1; basename "$PWD"; }
+PROMPT_COMMAND='echo  -ne "${_c6}DARE> \033]0; $(here ../..)/$(here ..)/$(here .)\007";PS1="$_c1$(here ../..)/$_c2$(here ..)/$_c3$(here .) ${_c6}\!>${_c0}\e[m "'
   
 echo -n "${ltyl}" 
 
