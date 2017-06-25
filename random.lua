@@ -1,6 +1,6 @@
 --[[
 Lua's math.random() is an interface to the C rand() function
-provided by the OS libc; its implementation varies by platform
+provided by the OS libc. This implementation varies by platform
 so the numbers it generates also varies. 
 
 Can't have that (tests won't port across platforms)
@@ -22,6 +22,7 @@ see:
 "Random Number Generators: Good Ones Are Hard To Find"
 Steve Park and Keith Miller
 Communications of the ACM, October 1988
+
 Also, the raw random number generator is wrapped in a
 97 table to increase randomness.
 --]]

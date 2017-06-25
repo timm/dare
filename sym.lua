@@ -3,6 +3,9 @@ local the=require "config"
 local function new()
   return {n=0, counts={}, most=0,mode=nil,_ent=nil } end
 ------------------------------------------------------
+local function fromString(str)
+    return tonumber(str) end
+------------------------------------------------------
 local function add(i,x)
   if x ~= IGNORE then
     i._ent = nil 
@@ -32,4 +35,5 @@ local function ke(i)
   e = -1*e
   return k,e,k*e end
 ------------------------------------------------------
-return {new=new, add=add,ent=ent,spread=ent,ke=ke}
+return {new=new, add=add,ent=ent,spread=ent,ke=ke,
+        fromString=fromString}

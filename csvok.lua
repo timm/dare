@@ -1,3 +1,7 @@
+--[[
+
+# csvok : unit tests for csv
+
 DARE, Copyright (c) 2017, Tim Menzies
 All rights reserved, BSD 3-Clause License
 
@@ -34,3 +38,43 @@ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------
+
+--]]
+
+local show = require "show"
+local o    = require "tests"	
+local csv  = require "csv"
+
+local xx=[[outlook,
+$temp,
+?humidity,
+windy,!play #asdas sfsd
+sunny,85,85,FALSE,no
+sunny,80,90,TRUE,
+ no
+overcast,83,86,FALSE,yes
+rainy,70,96,FALSE,yes
+rainy,68,80,FALSE,yes
+
+
+rainy,65,70,TRUE,no
+overcast,64,65,TRUE,yes
+sunny,72,95,FALSE,no #adsas
+sunny,69,70,FALSE,yes
+rainy,75,80,FALSE,yes
+sunny,75,70,TRUE,yes
+
+overcast,72,90,TRUE,yes
+overcast,81,75,FALSE,yes
+rainy,71,
+91, TRUE ,no]]
+
+local function _test1()
+   csv.loop(xx,show.str)
+   print("")
+   csv.loop("data/weather.csv",show.str)
+end
+
+o.k{_test1}

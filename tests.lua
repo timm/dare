@@ -1,21 +1,29 @@
 ------------------------------------------------------
 local pass,fail = 0,0
-
+local builtin = { 
+  math=true, package=true, 
+  table=true, coroutine=true, os=true, 
+  io=true, bit32=true, string=true, 
+  arg=true, debug=true, _VERSION=true, _G=true,
+  load=true, xpcall=true, type=true, print=true,
+  pcall=true, require=true, tonumber=true,
+  getmetatable=true, setmetatable=true, ipairs=true,
+  tostring=true, loadfile=true, collectgarbage=true,
+  next=true, rawequal=true, rawget=true, rawlen=true,
+  pairs=true, error=true, dofile=true, unpack=true,
+  select=true, loadstring=true, module=true, assert=true,
+  rawset=true }
+-------------------------------------------------------
 local function report() 
   print(string.format(
         ":pass %s :fail %s :percentPass %.0f%%",
          pass, fail, 100*pass/(0.001+pass+fail))) end
 -------------------------------------------------------
-local builtin = { math=true, package=true, 
-                  table=true, coroutine=true, os=true, 
-                  io=true, bit32=true, string=true, 
-                  arg=true, debug=true, _VERSION=true, _G=true}
-
 local function globals()
   for k,v in pairs( _G ) do
-    if type(v) ~= 'function' then  
+    --if type(v) ~= 'function' then  
        if not builtin[k] then 
-         print("-- Global: " .. k) end end end end
+         print("-- Global: " .. k) end end end --end
 ------------------------------------------------------
 local function tests(t)
   for s,x in pairs(t) do  
@@ -32,3 +40,7 @@ local function main(t)
   globals()  end
 ------------------------------------------------------
 return {k=main}
+
+
+
+
