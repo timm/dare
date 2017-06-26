@@ -31,6 +31,24 @@ vi() { ## edit files using the DARE config stuff
     vim -u "$Here/etc/dotvimrc" $*
     echo "Done!"
 }
+bye() { ## push all to on-line repo
+  _gitting
+	git status
+	git commit -am "saving"
+ git push origin master
+}
+hi() { ## pull updates from on-line repo
+  _gitting
+	git push origin master
+}
+gitting() {
+	git config --global credential.helper cache
+	git config credential.helper 'cache --timeout=3600'
+}
+timm() { ## Private: sets up this repo for timm
+	@git config --global user.name "Tim Menzies"
+	@git config --global user.email tim.menzies@gmail.com
+}
 copyright() { ## show copyright notice
   cat $Here/LICENSE
 }
