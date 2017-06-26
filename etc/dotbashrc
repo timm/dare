@@ -5,22 +5,52 @@ alias ls='ls -G'
 export LESS='-R'
 export LESSOPEN='|$Here/etc/lessfilter %s'
 
-load() {
+load() { ## reload environment
  . $Here/etc/dotbashrc
 }
-vi() {
-    vim -u $Here/etc/dotvimrc $*
+installation() { ## install DARE (need only be run once)
+  for f in lua vim git make ranger asciiquarium htop cmatrix ; do
+    if which $f; then true; else 
+     if [ "$(uname)" == "Darwin" ]; then
+        brew install $f
+     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        sudo apt-get install $f
+     elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+        choco install $f
+     elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+        choco install $f
+     fi 
+   fi
+  done
+  if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
+    git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
+    vim -u "$Here/etc/dotvimrc" -c 'PluginInstall' -c 'qa!'
+  fi
+}
+vi() { ## edit files using the DARE config stuff
+    vim -u "$Here/etc/dotvimrc" $*
     echo "Done!"
 }
-make() {
+copyright() { ## show copyright notice
+  cat $Here/LICENSE
+}
+help() { ## show help
+  echo "${blue}"
+  echo "Options:"
+  grep '##' $Here/etc/dotbashrc | sort | 
+  gawk 'BEGIN { FS="[()]+[ ]*{.*##[ ]*"}  
+        $2 !~ /^[ \t]*$/ {printf("   %-15s%s\n",$1,$2)}'
+  echo -n "${white}"
+}
+make() { ## run any Makefile at the root of this repo 
   root=$(git rev-parse --show-toplevel)
   if [ -n "$root" ]; then
-    ( cd $root; make1 $*)
+    ( cd $root; _make1 $*)
   else
     /usr/bin/make $*
   fi
 }
-make1() {
+_make1() {
     if [ -f Makefile ]; then
         echo "My making..."
         /usr/bin/make $*
@@ -44,7 +74,7 @@ local the=require "config"
 	
 EOF
 }
-twins() { # generate source code and unit test files
+twins() { ## generate source code and unit test files
   f=$(basename $1 ".lua")
   if [ ! -f "${f}.lua" ]; then 
 	   _twins1 $f utilities  > ${f}.lua
@@ -104,9 +134,9 @@ l        _)
 +   ^.       "-.          
  .    "-.__     ~-.___,    
            "--.._____.^  -- Row     
-
 EOF
 echo -n "${white}"
+help
 if [ -f "$HOME/.config/dare/config" ]; then
   . "$HOME/config/dare/config"
 fi

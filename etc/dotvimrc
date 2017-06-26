@@ -60,7 +60,6 @@ Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'croaker/mustang-vim'
 Plugin 'ap/vim-buftabline'
-"Plugin 'wolfgangmehner/vim-support'
 
 
 " All of your Plugins must be added before the following line

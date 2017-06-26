@@ -47,45 +47,47 @@ local dull     = "['\"\t\n\r]*"  -- white space, quotes
 local padding  = "%s*(.-)%s*"    -- space around words
 local comments = "#.*"           -- comments
 local files    = {txt=true, csv=true}
+--------------------------------------------------------
+local function incomplete(txt) -- must join line to next
+  return string.sub(txt,-1) == "," end
 -------------------------------------------------------
-local function row(txt,wme)
-  local cells,col = {},0
+local function ignored(txt) -- ignore this column
+  return string.find(txt,the.ignore) == nil end
+-------------------------------------------------------
+local function cells(txt,wme) -- skip the ignored cells
+  local out,col = {},0
   for word in string.gmatch(txt,sep) do
     col = col + 1
-    if wme.first then
-      wme.use[col] = string.find(word,the.ignore) ==nil
-    end
-    if wme.use[col] then
-      cells[#cells+1] = tonumber(word) or word 
-    end end
-  wme.fn(cells)
-  wme.first=false end 
+    if wme.first    then 
+      wme.use[col] = ignored(word) end
+    if wme.use[col] then 
+      out[#out+1]  = tonumber(word) or word end end
+  return out end
 -------------------------------------------------------
-local function line(txt,wme)
-  txt= txt:gsub(padding,"%1")
-          :gsub(dull,"")
-          :gsub(comments,"") 
-  if #txt > 0 then row(txt,wme) end 
+local function withOneLine(cache,wme)
+  txt= table.concat(cache):gsub(padding,"%1")
+                          :gsub(dull,"")
+                          :gsub(comments,"") 
+  if #txt > 0 then 
+    wme.fn( cells(txt,wme) )
+    wme.first=false end 
   return {} end
 -------------------------------------------------------
-local function ready(txt)
-  return string.sub(txt,-1) ~= "," end
--------------------------------------------------------
-local function lines(src,wme)
+local function withEachLine(src,wme)
   local cache={}
   if files[string.sub(src,-3,-1)] then
     io.input(src) 
     for txt in io.lines() do 
       cache[#cache+1] = txt
-      if ready(txt) then
-        cache= line(table.concat(cache),wme) end end 
+      if not incomplete(txt) then
+        cache= withOneLine(cache,wme) end end 
   else 
     for txt in src:gmatch("[^\r\n]+") do
       cache[#cache+1] = txt
-      if ready(txt) then
-        cache= line(table.concat(cache),wme) end end end end
+      if not incomplete(txt) then
+        cache= withOneLine(cache,wme) end end end end
 -------------------------------------------------------
-local function csv(src, fn)
-  lines(src, {fn=fn, first=true, use={}}) end
+local function main(src, fn)
+  withEachLine(src, {fn=fn, first=true, use={}}) end
 -------------------------------------------------------
-return {loop=csv}
+return {loop=main}
