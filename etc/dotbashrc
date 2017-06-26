@@ -5,10 +5,10 @@ alias ls='ls -G'
 export LESS='-R'
 export LESSOPEN='|$Here/etc/lessfilter %s'
 
-load() { ## reload environment
+load() { ## reload environment ## shell
  . $Here/etc/dotbashrc
 }
-installation() { ## install DARE (need only be run once)
+installation() { ## install DARE (need only be run once) ## install
   sudo easy_install Pygments
   for f in lua vim git make gawk htop ranger asciiquarium cmatrix ; do
     if which $f; then true; else 
@@ -27,18 +27,20 @@ installation() { ## install DARE (need only be run once)
     git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
     vim -u "$Here/etc/dotvimrc" -c 'PluginInstall' -c 'qa!'
   fi
+  gitting
+  timm
 }
-vi() { ## edit files using the DARE config stuff
+vi() { ## edit files using the DARE config stuff ## shell
     vim -u "$Here/etc/dotvimrc" $*
     echo "Done!"
 }
-bye() { ## push all to on-line repo
+bye() { ## push all to on-line repo ## git
   gitting
 	git status
 	git commit -am "saving"
  git push origin master
 }
-hi() { ## pull updates from on-line repo
+hi() { ## pull updates from on-line repo ## git
   gitting
 	git push origin master
 }
@@ -46,22 +48,29 @@ gitting() {
 	git config --global credential.helper cache
 	git config credential.helper 'cache --timeout=3600'
 }
-timm() { ## Private: sets up this repo for timm
-	@git config --global user.name "Tim Menzies"
-	@git config --global user.email tim.menzies@gmail.com
+timm() { ## Private: sets up this repo for timm ## install
+	git config --global user.name "Tim Menzies"
+	git config --global user.email tim.menzies@gmail.com
 }
-copyright() { ## show copyright notice
-  cat $Here/LICENSE
+copyright() { ## show copyright notice ## misc
+  cat $Here/LICENSE.md
 }
-help() { ## show help
+help() { ## show help ## misc
   echo "${blue}"
   echo "Options:"
-  grep '##' $Here/etc/dotbashrc | sort | 
-  gawk 'BEGIN { FS="[()]+[ ]*{.*##[ ]*"}  
-        $2 !~ /^[ \t]*$/ {printf("   %-15s%s\n",$1,$2)}'
+  grep '##' $Here/etc/dotbashrc | 
+  sort -t\# -k 5  | 
+  grep -v 'grep' |
+  gawk 'BEGIN { FS="#"}  
+          { pre=  $5==last ? "" : $5
+            b="----------------------"
+            line = $5==last ? "" : b b b   "\n"
+            last=$5 
+            gsub(/[(){]/,"",$1)
+            printf("%s%-12s%-15s%s\n",line,pre,$1,$3)}'
   echo -n "${white}"
 }
-make() { ## run any Makefile at the root of this repo 
+make() { ## run any Makefile at the root of this repo ## shell
   root=$(git rev-parse --show-toplevel)
   if [ -n "$root" ]; then
     ( cd $root; _make1 $*)
@@ -83,7 +92,7 @@ cat <<EOF
 
 # $1 : $2
 
-$(cat $Here/LICENSE)
+$(cat $Here/LICENSE.md)
 
 ------------------------------------------------------
 
@@ -93,7 +102,7 @@ local the=require "config"
 	
 EOF
 }
-twins() { ## generate source code and unit test files
+twins() { ## generate source code and unit test files ## shell
   f=$(basename $1 ".lua")
   if [ ! -f "${f}.lua" ]; then 
 	   _twins1 $f utilities  > ${f}.lua
