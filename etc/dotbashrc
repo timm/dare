@@ -9,7 +9,8 @@ load() { ## reload environment
  . $Here/etc/dotbashrc
 }
 installation() { ## install DARE (need only be run once)
-  for f in lua vim git make ranger asciiquarium htop cmatrix ; do
+  sudo easy_install Pygments
+  for f in lua vim git make gawk htop ranger asciiquarium cmatrix ; do
     if which $f; then true; else 
      if [ "$(uname)" == "Darwin" ]; then
         brew install $f
@@ -32,13 +33,13 @@ vi() { ## edit files using the DARE config stuff
     echo "Done!"
 }
 bye() { ## push all to on-line repo
-  _gitting
+  gitting
 	git status
 	git commit -am "saving"
  git push origin master
 }
 hi() { ## pull updates from on-line repo
-  _gitting
+  gitting
 	git push origin master
 }
 gitting() {
