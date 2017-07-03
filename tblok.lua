@@ -49,7 +49,7 @@ local o=require "tests"
 local tbl=require "tbl"
  
 local function _test1()
-   local t=tbl("data/weather.csv")
+   local t=tbl.create("data/weather.csv")
    show(t.spec)
    assert(#t.rows==14)
    assert(t.rows[14].cells[1]=="rainy")

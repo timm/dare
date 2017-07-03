@@ -2,18 +2,18 @@ local id=  require "id"
 local lst= require "lists"
 local num= require "num"
 -----------------------------------------------------------
-local M={}
-local function M.new()
-  return {id=id.new(),   cells={},   cooked={}, dom=nil} end
+
+local function new()
+  return {id=id.new(),   cells={},   cooked={}} end
 -----------------------------------------------------------
-local function M.add(i,cells,t)
+local function add(i,cells,t)
   i.cells=lst.copy(cells)
   i.cooked=lst.copy(cells)
   for _,head in pairs(t.all.cols) do
     head.what.add(head, cells[head.pos]) end
   return i end
 -----------------------------------------------------------
-local function dom1(i,j,t)
+local function dominates1(i,j,t)
   local e,n = 2.71828,#t.goals
   local sum1,sum2=0,0
   for _,col in pairs(t.goals)  do
@@ -26,12 +26,12 @@ local function dom1(i,j,t)
   return sum1/n < sum2/n 
 end
 -----------------------------------------------------------
-local function M.dominates(i,t) 
+local function dominates(i,t) 
   if not i.dom then
     for _,j in pairs(t.rows) do
       if i.id ~= j.id then 
-        if dom1(i,j,t) then
+        if dominates1(i,j,t) then
           i.dom = i.dom + 1  end end end end 
   return i.dom end
 -----------------------------------------------------------
-return M
+return {new=new, add=add,dominates=dominates}

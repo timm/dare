@@ -51,7 +51,7 @@ local csv=require "csv"
 local show=require "show"
 -------------------------------------------------------------
 local function new(cells) return {
-  rows={}, less={}, more={}, specs={}, goals={} 
+  rows={}, less={}, more={}, spec={}, goals={} ,
   all={nums={}, syms={}, cols={}}, -- all columns
   x  ={nums={}, syms={}, cols={}}, -- all independent columns
   y  ={nums={}, syms={}, cols={}}  -- all depednent   columns
@@ -87,7 +87,13 @@ local function add(i,cells)
   local fn= #i.spec==0 and header or data
   fn(i,cells) end
 -------------------------------------------------------------
-return function (f)
+local function copy(i) 
+  return header(new(),i.spec) end
+-------------------------------------------------------------
+local function fromCsv(f)
   local out = new()
   csv(f, function (cells) add(out,cells) end)
   return out end
+-------------------------------------------------------------
+return {copy=copy, create=fromCsv} 
+
