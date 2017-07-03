@@ -42,21 +42,21 @@ POSSIBILITY OF SUCH DAMAGE.
 --]]
 -------------------------------------------------------
 local the      = require "config"
-local sep      = "([^,]+)"       -- cell seperator
+local notsep   = "([^" .. the.sep .. "]+)" -- not cell seperator
 local dull     = "['\"\t\n\r]*"  -- white space, quotes
 local padding  = "%s*(.-)%s*"    -- space around words
 local comments = "#.*"           -- comments
 local files    = {txt=true, csv=true}
 --------------------------------------------------------
 local function incomplete(txt) -- must join line to next
-  return string.sub(txt,-1) == "," end
+  return string.sub(txt,-1) == the.sep  end
 -------------------------------------------------------
 local function ignored(txt) -- ignore this column
   return string.find(txt,the.ignore) == nil end
 -------------------------------------------------------
-local function cells(txt,wme) -- skip the ignored cells
+local function cellsWeAreNotIgnoring(txt,wme) 
   local out,col = {},0
-  for word in string.gmatch(txt,sep) do
+  for word in string.gmatch(txt,notsep) do
     col = col + 1
     if wme.first    then 
       wme.use[col] = ignored(word) end
@@ -64,30 +64,29 @@ local function cells(txt,wme) -- skip the ignored cells
       out[#out+1]  = tonumber(word) or word end end
   return out end
 -------------------------------------------------------
-local function withOneLine(cache,wme)
-  txt= table.concat(cache):gsub(padding,"%1")
-                          :gsub(dull,"")
-                          :gsub(comments,"") 
+local function withOneLine(txt,wme)
+  txt= txt:gsub(padding,"%1")
+          :gsub(dull,"")
+          :gsub(comments,"") 
   if #txt > 0 then 
-    wme.fn( cells(txt,wme) )
-    wme.first=false end 
-  return {} end
+    wme.fn( cellsWeAreNotIgnoring(txt,wme) ) end end
 -------------------------------------------------------
 local function withEachLine(src,wme)
   local cache={}
+  local function line1(line)
+    cache[#cache+1] = line
+    if not incomplete(line) then
+       cache= withOneLine(table.concat(cache), wme) 
+       cache= {}
+       wme.first=false end end
+  -------------------------------------
   if files[string.sub(src,-3,-1)] then
     io.input(src) 
-    for txt in io.lines() do 
-      cache[#cache+1] = txt
-      if not incomplete(txt) then
-        cache= withOneLine(cache,wme) end end 
+    for line in io.lines() do 
+      line1(line) end
   else 
-    for txt in src:gmatch("[^\r\n]+") do
-      cache[#cache+1] = txt
-      if not incomplete(txt) then
-        cache= withOneLine(cache,wme) end end end end
+    for line in src:gmatch("[^\r\n]+") do
+      line1(line) end end end
 -------------------------------------------------------
-local function main(src, fn)
+return function (src,fn)
   withEachLine(src, {fn=fn, first=true, use={}}) end
--------------------------------------------------------
-return {loop=main}

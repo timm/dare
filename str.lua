@@ -45,7 +45,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 local the=require "config"
 
-local function say(fmt, ...)
-  return io.write(string.format(fmt, unpack(arg))) end
+local function fmt(control, ...)
+  return string.format(control, unpack(arg)) end
 
-return {say=say}
+local function say(control, ...)
+  return io.write(string.format(control, unpack(arg))) end
+
+return {say=say,fmt=fmt}

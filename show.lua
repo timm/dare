@@ -53,4 +53,4 @@ local function table2text(t,seen)
   return print(table.concat(out))
 end
 -----------------------------------------------------
-return {str=table2text}
+return function (t) table2text(t) end

@@ -48,43 +48,46 @@ local num=require "num"
 local sym=require "sym"
 local row=require "row"
 local csv=require "csv"
+local show=require "show"
 -------------------------------------------------------------
 local function new(cells) return {
-  cols={}, rows={}, less={}, ynums={}, xnums={},
-  more={}, spec={}, ys={}, xs={}, syms={}, xsyms={}, nums={}} end
+  rows={}, less={}, more={}, specs={}, goals={} 
+  all={nums={}, syms={}, cols={}}, -- all columns
+  x  ={nums={}, syms={}, cols={}}, -- all independent columns
+  y  ={nums={}, syms={}, cols={}}  -- all depednent   columns
+} end
 -------------------------------------------------------------
 local function meta(i,txt)
   local spec =  {
-    {what= "%$", who= num, wheres= {i.cols, i.xs, i.nums,         i.xnums}},
-    {what= "<",  who= num, wheres= {i.cols, i.ys, i.nums, i.less, i.ynums}},
-    {what= ">",  who= num, wheres= {i.cols, i.ys, i.nums, i.more, i.ynums}},
-    {what= "!",  who= sym, wheres= {i.cols, i.ys, i.syms                 }},
-    {what= "",   who= sym, wheres= {i.cols, i.xs, i.syms,         i.xsyms}}}
+    {when= "%$", what= num, weight= 1, where= {i.all.cols, i.x.cols, i.all.nums,                  i.x.nums}},
+    {when= "<",  what= num, weight=-1, where= {i.all.cols, i.y.cols, i.all.nums, i.goals, i.less, i.y.nums}},
+    {when= ">",  what= num, weight= 1, where= {i.all.cols, i.y.cols, i.all.nums, i.goals, i.more, i.y.nums}},
+    {when= "!",  what= sym, weight= 1, where= {i.all.cols, i.y.cols, i.all.syms                   }},
+    {when= "",   what= sym, weight= 1, where= {i.all.cols, i.x.cols, i.all.syms,                  i.x.syms}}}
   for _,want in pairs(spec) do
-    if string.find(txt,want.what) ~= nil then
-      return want.who, want.wheres end end end
+    if string.find(txt,want.when) ~= nil then
+      return want.what, want.weight, want.where end end end
 -------------------------------------------------------------
 local function header(i,cells)
   i.spec = cells
   for col,cell in ipairs(cells) do
-    local who, wheres = meta(i,cell)
-    local one = who.new()
-    one.col = col
-    one.txt = cell
-    one.who = who
+    local what, weight, wheres = meta(i,cell)
+    local one = what.new()
+    one.pos   = col
+    one.txt   = cell
+    one.what  = what
+    one.weight= weight
     for _,where in ipairs(wheres) do
       where[ #where + 1 ] = one end end end
 -------------------------------------------------------------
 local function data(i,cells)
-  i.rows[#i.rows+1] = row.add(row.new(), cells,t) end
+  i.rows[#i.rows+1] = row.add(row.new(), cells,i) end
 -------------------------------------------------------------
 local function add(i,cells) 
-  local fn= #i.rows==0 and header or data
+  local fn= #i.spec==0 and header or data
   fn(i,cells) end
 -------------------------------------------------------------
-local function csv2tbl(f,     t)
-  out = new()
-  csv.loop(f, function (cells) add(out,cells) end)
+return function (f)
+  local out = new()
+  csv(f, function (cells) add(out,cells) end)
   return out end
--------------------------------------------------------------
-return {csv2tbl=csv2tbl}

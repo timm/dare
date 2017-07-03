@@ -7,11 +7,11 @@ local function add(i,x)
   if x ~= IGNORE then
     i._ent = nil 
     i.n = i.n + 1
-    local old = i.counts[x]
-    local new = x and x + 1 or 1
-    i.counts[x] = new
-    if new > i.most then
-      i.most, i.mode = new,x end end end
+    local seen = i.counts[x]
+    seen = seen and seen+1 or 1
+    i.counts[x] = seen 
+    if seen > i.most then
+      i.most, i.mode = seen,x end end end
 ------------------------------------------------------
 local function ent(i)
   if i._ent == nil then 

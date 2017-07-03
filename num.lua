@@ -1,7 +1,7 @@
 local the=require "config"
 ------------------------------------------------------
 local function new()
-    return {n=0,mu=0,m2=0,sd=0,hi=-1e32,lo=1e32} end
+    return {n=0,mu=0,m2=0,sd=0,hi=-1e32,lo=1e32,w=1} end
 ------------------------------------------------------
 local function add(i,x)
   if one ~= the.ignore then 
@@ -21,4 +21,4 @@ local function norm(i,x)
   return (x - i.lo) / (i.up - i.lo + 1e-32) end
 -----------------------------------------------------
 return {new=new, add=add, norm=norm,
-        spread=function (i) return i.sd}
+        spread=function (i) return i.sd end}

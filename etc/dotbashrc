@@ -1,3 +1,4 @@
+#!/bin/bash
 # -*- sh -*-
 
 alias ls='ls -G'
@@ -33,6 +34,9 @@ installation() { ## install DARE (need only be run once) ## install
 vi() { ## edit files using the DARE config stuff ## shell
     vim -u "$Here/etc/dotvimrc" $*
     echo "Done!"
+}
+ok() { ## 'ok X' is shorthand for lua Xok.lua ## shell
+  lua ${1}ok.lua
 }
 bye() { ## push all to on-line repo ## git
   gitting

@@ -7,9 +7,6 @@ local function last(x)  return x[#x] end
 local function same(x) 
   return x end
 
-local function copy(t)  --recursive       
-  return type(t) ~= 'table' and t or collect(t,copy) end
-
 local function shallowCopy(t) 
   return map(t,same) end
 
@@ -33,6 +30,10 @@ local function collect(t,f)
   if t then
     for i,v in pairs(t) do out[i] = f(v) end end
   return out end
+
+  local function copy(t)  --recursive       
+  return type(t) ~= 'table' and t or collect(t,copy) end
+
 -------------------------------------------------------
 local function shuffle( t )
   for i= 1,#t do

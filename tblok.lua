@@ -44,14 +44,19 @@ POSSIBILITY OF SUCH DAMAGE.
 --]]
 
 local the=require "config"
-	
+local show=require "show"	
 local o=require "tests"	
-local r=require "random"
-local x=require "tbl"
+local tbl=require "tbl"
  
 local function _test1()
-        	assert(true)
+   local t=tbl("data/weather.csv")
+   show(t.spec)
+   assert(#t.rows==14)
+   assert(t.rows[14].cells[1]=="rainy")
+   assert(string.format("%.4f",t.all.nums[1].mu) == "73.5714")
+   assert(string.format("%.4f",t.all.nums[1].sd) ==  "6.5717")
+   assert(t.x.syms[1].counts["overcast"] == 4)
+   assert(t.x.syms[2].counts["TRUE"]==6)
 end
 
-r.seed(1)
 o.k{_test1}
