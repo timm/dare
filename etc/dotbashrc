@@ -11,7 +11,7 @@ load() { ## reload environment ## shell
 }
 installation() { ## install DARE (need only be run once) ## install
   sudo easy_install Pygments
-  for f in lua vim git make gawk htop ranger asciiquarium cmatrix ; do
+  for f in lua luajit vim git make gawk htop ranger asciiquarium cmatrix ; do
     if which $f; then true; else 
      if [ "$(uname)" == "Darwin" ]; then
         brew install $f
@@ -37,6 +37,9 @@ vi() { ## edit files using the DARE config stuff ## shell
 }
 ok() { ## 'ok X' is shorthand for lua Xok.lua ## shell
   lua ${1}ok.lua
+}
+oks() { ## run all the Xok.lua files ## shell
+  lua -e "$(ls *ok.lua | gawk -F\. '{print "require \""$1"\""}')"
 }
 bye() { ## push all to on-line repo ## git
   gitting

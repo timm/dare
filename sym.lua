@@ -1,9 +1,9 @@
 local the=require "config"
 ------------------------------------------------------
-local function new()
+local function create()
   return {n=0, counts={}, most=0,mode=nil,_ent=nil } end
 ------------------------------------------------------
-local function add(i,x)
+local function update(i,x)
   if x ~= IGNORE then
     i._ent = nil 
     i.n = i.n + 1
@@ -32,4 +32,4 @@ local function ke(i)
   e = -1*e
   return k,e,k*e end
 ------------------------------------------------------
-return {new=new, add=add, ent=ent, spread=ent, ke=ke}
+return {create=create, update=update, ent=ent, spread=ent, ke=ke}

@@ -50,7 +50,7 @@ local row=require "row"
 local csv=require "csv"
 local show=require "show"
 -------------------------------------------------------------
-local function new(cells) return {
+local function create(cells) return {
   rows={}, less={}, more={}, spec={}, goals={} ,
   all={nums={}, syms={}, cols={}}, -- all columns
   x  ={nums={}, syms={}, cols={}}, -- all independent columns
@@ -72,7 +72,7 @@ local function header(i,cells)
   i.spec = cells
   for col,cell in ipairs(cells) do
     local what, weight, wheres = meta(i,cell)
-    local one = what.new()
+    local one = what.create()
     one.pos   = col
     one.txt   = cell
     one.what  = what
@@ -81,19 +81,24 @@ local function header(i,cells)
       where[ #where + 1 ] = one end end end
 -------------------------------------------------------------
 local function data(i,cells)
-  i.rows[#i.rows+1] = row.add(row.new(), cells,i) end
+  i.rows[#i.rows+1] = row.update(row.create(), cells,i) end
 -------------------------------------------------------------
-local function add(i,cells) 
+local function update(i,cells) 
   local fn= #i.spec==0 and header or data
   fn(i,cells) end
 -------------------------------------------------------------
 local function copy(i) 
-  return header(new(),i.spec) end
+  return header(create(),i.spec) end
+-------------------------------------------------------------
+local function dominates(i)
+  for _,r in pairs(i.rows) do row.dominate(r,i) end
+  table.sort(i.rows,function (r1,r2) 
+                       return r1.dom > r2.dom end) end
 -------------------------------------------------------------
 local function fromCsv(f)
-  local out = new()
-  csv(f, function (cells) add(out,cells) end)
+  local out = create()
+  csv(f, function (cells) update(out,cells) end)
   return out end
 -------------------------------------------------------------
-return {copy=copy, create=fromCsv} 
+return {copy=copy, dominates=dominates,create=fromCsv} 
 

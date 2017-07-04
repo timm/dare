@@ -1,10 +1,10 @@
 local the=require "config"
 ------------------------------------------------------
-local function new()
+local function create()
     return {n=0,mu=0,m2=0,sd=0,hi=-1e32,lo=1e32,w=1} end
 ------------------------------------------------------
-local function add(i,x)
-  if one ~= the.ignore then 
+local function update(i,x)
+  if x ~= the.ignore then 
     i.n = i.n + 1
     if x < i.lo then i.lo = x end
     if x > i.hi then i.hi = x end
@@ -18,7 +18,7 @@ local function spread(i) return i.sd end
 -----------------------------------------------------
 local function norm(i,x)
   if x==the.ignore then return x end
-  return (x - i.lo) / (i.up - i.lo + 1e-32) end
+  return (x - i.lo) / (i.hi - i.lo + 1e-32) end
 -----------------------------------------------------
-return {new=new, add=add, norm=norm,
+return {create=create, update=update, norm=norm,
         spread=function (i) return i.sd end}

@@ -12,7 +12,8 @@ local builtin = {
   next=true, rawequal=true, rawget=true, rawlen=true,
   pairs=true, error=true, dofile=true, unpack=true,
   select=true, loadstring=true, module=true, assert=true,
-  rawset=true }
+  rawset=true, gcinfo=true, setfenv=true, jit=true,
+  bit=true, newproxy=true, getfenv=true}
 -------------------------------------------------------
 local function report() 
   print(string.format(
@@ -34,12 +35,15 @@ local function tests(t)
        fail = fail + 1
        print("Failure: ".. err) end end end
 ------------------------------------------------------
+local function nstr(x,n)
+  return  string.format("%.".. n .."f",x) end
+------------------------------------------------------
 local function main(t) 
   if next(t) ~= nil then tests(t) end 
   report()
   globals()  end
 ------------------------------------------------------
-return {k=main}
+return {k=main,nstr=nstr}
 
 
 

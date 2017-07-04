@@ -72,9 +72,9 @@ rainy,71,
 91, TRUE ,no]]
 
 local function _test1()
-   csv(xx,show.str)
+   csv(xx,show)
    print("")
-   csv("data/weather.csv",show.str)
+   csv("data/weather.csv",show)
 end
 
 o.k{_test1}
