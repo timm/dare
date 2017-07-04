@@ -3,6 +3,13 @@ local the=require "config"
 local function create()
     return {n=0,mu=0,m2=0,sd=0,hi=-1e32,lo=1e32,w=1} end
 ------------------------------------------------------
+local function updates(lst,f,i)
+  i = i or create()
+  f = f or function (z) return z end
+  for _,one in pairs(lst) do
+    update(i, f(one)) end 
+  return i end
+------------------------------------------------------
 local function update(i,x)
   if x ~= the.ignore then 
     i.n = i.n + 1
