@@ -48,10 +48,12 @@ local num=require "num"
 local sym=require "sym"
 local row=require "row"
 local csv=require "csv"
-local show=require "show"
 -------------------------------------------------------------
 local function create(cells) return {
-  rows={}, less={}, more={}, spec={}, goals={} ,
+  rows={}, 
+  spec={}, 
+  goals={} , less={}, more={}, 
+  -- goals={less={}, more={}, cols={}}
   all={nums={}, syms={}, cols={}}, -- all columns
   x  ={nums={}, syms={}, cols={}}, -- all independent columns
   y  ={nums={}, syms={}, cols={}}  -- all depednent   columns
@@ -91,9 +93,10 @@ local function copy(i)
   return header(create(),i.spec) end
 -------------------------------------------------------------
 local function dominates(i)
-  for _,r in pairs(i.rows) do row.dominate(r,i) end
+  for _,r in pairs(i.rows) do 
+    row.dominate(r,i) end
   table.sort(i.rows,function (r1,r2) 
-                       return r1.dom > r2.dom end) end
+             return r1.dom > r2.dom end) end
 -------------------------------------------------------------
 local function fromCsv(f)
   local out = create()
@@ -101,4 +104,3 @@ local function fromCsv(f)
   return out end
 -------------------------------------------------------------
 return {copy=copy, dominates=dominates,create=fromCsv} 
-

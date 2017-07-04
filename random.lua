@@ -43,7 +43,7 @@ local function rseed(n)
   randomtable = nil end
 --------------------------------------------------
 local function system()
-  return seed(math.random()*modulus) end
+  return rseed(math.random()*modulus) end
 --------------------------------------------------
 local function another (       x,i)
   if randomtable == nil then

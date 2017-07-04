@@ -43,7 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 --]]
 
-local show = require "show"
+require "show"
 local o    = require "tests"	
 local csv  = require "csv"
 
@@ -72,9 +72,9 @@ rainy,71,
 91, TRUE ,no]]
 
 local function _test1()
-   csv(xx,show)
+   csv(xx,print)
    print("")
-   csv("data/weather.csv",show)
+   csv("data/weather.csv",print)
 end
 
 o.k{_test1}

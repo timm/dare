@@ -1,4 +1,3 @@
-local i={}
 local r=require "random"
 -------------------------------------------------------
 local function first(x) return x[1]  end
