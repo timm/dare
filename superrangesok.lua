@@ -1,6 +1,6 @@
 --[[
 
-# chopok : unit tests for chop
+# superrangesok : unit tests for superranges
 
 DARE, Copyright (c) 2017, Tim Menzies
 All rights reserved, BSD 3-Clause License
@@ -48,15 +48,11 @@ local the=require "config"
 	
 local o=require "tests"	
 local r=require "random"
-local range=require "range"
+local x=require "superranges"
  
 local function _test1()
-    tmp={}
-    for x=1,1000000 do
-      tmp[#tmp+1] = r.r()^0.5 end
-    for i,k in pairs(range(tmp)) do
-      print(i,k) end
+        	assert(true)
 end
 
-r.seed(2)
+r.seed(1)
 o.k{_test1}

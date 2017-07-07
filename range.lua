@@ -1,6 +1,6 @@
 --[[
 
-# chop : unsupervised discretiation
+# range : unsupervised discretiation
 
 DARE, Copyright (c) 2017, Tim Menzies
 All rights reserved, BSD 3-Clause License
@@ -46,55 +46,54 @@ POSSIBILITY OF SUCH DAMAGE.
 require "show"
 local the=require "config"
 local num=require "num"
+local some=require "sample"
 ----------------------------------
 local function create() return {
-  all= {},
+  _all= some.create(),
   n  = 0,
   hi = -2^63,
   lo =  2^63,
   span = 2^64} end
 ----------------------------------
 local function update(i,one, x)
-  i.all[#i.all+1] = one
-  i.n = i.n + 1
-  if x > i.hi then 
-    i.hi = x 
+  if x ~= the.ignore then
+    some.update(i._all,x)
+    i.n = i.n + 1
+    if x > i.hi then i.hi = x  end
+    if x < i.lo then i.lo = x  end
     i.span = i.hi - i.lo
-  else 
-    if x < i.lo then 
-      i.lo = x 
-      i.span = i.hi - i.lo end end 
-  return x end  
+    return x end  end
 ----------------------------------
 local function nextRange(i) 
-  i.now  = range()
+  i.now  = create()
   i.ranges[#i.ranges+1] = i.now end
 ----------------------------------
 local function rangeManager(lst, x)  
-  local _= { 
-    x     = x or function (z) return z  end,
+  local _ = { 
+    x     = x,
     cohen = the.chop.cohen,
     m     = the.chop.m,
     size  = #lst,
     ranges= {} }
-  nextRange(_)
-  local n = num.updates(lst, _.x)
   _.enough = _.size^_.m
-  _.hi     = n.hi
-  _.epsilon= n.sd * _.cohen
+  nextRange(_)
+  _.num = num.updates(lst, _.x)
+  _.hi     = _.num.hi
+  _.epsilon= _.num.sd * _.cohen
   return _ end
 ----------------------------------
 return function (lst, x,       last)
-  table.sort(lst,_.x)
+  x= x or function (z) return z end
+  table.sort(lst, function (z1,z2) return x(z1) < x(z2) end)
   local i= rangeManager(lst, x)
   for j,one in pairs(lst) do
     local x1 = update(i.now, one, x(one))
     if j > 1 and
-       i.now.n        > i.enough  and
-       i.now.span     > i.epsilon and
-       i.now.n   -  j > i.enough  and
-       i.now.hi  - x1 > i.epsilon and
-       x1      - last > i.epsilon 
+       x1 > last and
+       i.now.n       > i.enough  and
+       i.now.span    > i.epsilon and
+       i.num.n - j   > i.enough  and
+       i.num.hi - x1 > i.epsilon 
     then nextRange(i) end 
     last = x1 
   end 

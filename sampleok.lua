@@ -1,6 +1,6 @@
 --[[
 
-# chopok : unit tests for chop
+# sampleok : unit tests for sample
 
 DARE, Copyright (c) 2017, Tim Menzies
 All rights reserved, BSD 3-Clause License
@@ -44,19 +44,21 @@ POSSIBILITY OF SUCH DAMAGE.
 --]]
 
 require "show"
-local the=require "config"
 	
 local o=require "tests"	
 local r=require "random"
-local range=require "range"
- 
+local s=require "sample"
+
+print(r.r())
+
 local function _test1()
-    tmp={}
-    for x=1,1000000 do
-      tmp[#tmp+1] = r.r()^0.5 end
-    for i,k in pairs(range(tmp)) do
-      print(i,k) end
+  local some=s.create(64)
+  print(some.most)
+  for _=1,10000 do
+    s.update(some,_) end
+  table.sort(some.all)
+  print(some.all) 
 end
 
-r.seed(2)
+r.seed(1)
 o.k{_test1}

@@ -1,6 +1,6 @@
 --[[
 
-# chopok : unit tests for chop
+# superranges : utilities
 
 DARE, Copyright (c) 2017, Tim Menzies
 All rights reserved, BSD 3-Clause License
@@ -45,18 +45,38 @@ POSSIBILITY OF SUCH DAMAGE.
 
 require "show"
 local the=require "config"
-	
-local o=require "tests"	
-local r=require "random"
+local num=require "num"
 local range=require "range"
- 
-local function _test1()
-    tmp={}
-    for x=1,1000000 do
-      tmp[#tmp+1] = r.r()^0.5 end
-    for i,k in pairs(range(tmp)) do
-      print(i,k) end
-end
-
-r.seed(2)
-o.k{_test1}
+-----------------------------------------------
+return function (lst,x,y)
+  local function xpect(lo,hi)
+    out= num.create()
+    for j=lo,hi do
+      num.updates(ranges[j]._all._all, y) end
+    return out end
+  --------------------------------------------
+  local function combine(lo,hi,all,bin,lvl)
+    local lbest,rbest,cut
+    local best= all.sd
+    for j=lo,hi-1 do
+      local l  = xpect(lo,  j, y,ranges)
+      local r  = xpect(j+1,hi, y,ranges)
+      local tmp= l.n/all.n*l.sd + r.n/all.n*r.sd
+      if (tmp*1.01 < best) then
+        cut  = j
+        best = tmp
+        lbest = copy(l)
+        rbest = copy(r)
+    end end
+    if cut then
+      bin= combine(lo,  cut,lbest,bin,lvl+1)
+      bin= combine(cut+1,hi,rbest,bin,lvl+1)
+    else
+      for j in lo,hi do
+        ranges[j].bin = bin end end 
+    return bin end 
+  --------------------------------------------
+  local ranges = range(lst,x)
+  return combine(1,#ranges, 
+                 xpect(1,#ranges),
+                 1,0) end

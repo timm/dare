@@ -133,6 +133,9 @@ local function ScalarToStr(Val)
   return Ret
 end
 
+local function private(str)
+  return type(str) == "string" and str:sub(1,1) == "_" end
+
 -- Converts a table to a Lua- and human-readable string.
 local function TblToStr(Tbl, Seen)
   Seen = Seen or {}
@@ -141,26 +144,28 @@ local function TblToStr(Tbl, Seen)
     Seen[Tbl] = true
     local LastArrayKey = 0
     for Key, Val in pairs(Tbl) do
-      if type(Key) == "table" then
-        Key = "[" .. TblToStr(Key, Seen) .. "]"
-      elseif not IsIdent(Key) then
-        if type(Key) == "number" and Key == LastArrayKey + 1 then
-          -- Don't mess with Key if it's an array key.
-          LastArrayKey = Key
-        else
-          Key = "[" .. ScalarToStr(Key) .. "]"
+      if not private(Key) then
+        if type(Key) == "table" then
+          Key = "[" .. TblToStr(Key, Seen) .. "]"
+        elseif not IsIdent(Key) then
+          if type(Key) == "number" and Key == LastArrayKey + 1 then
+            -- Don't mess with Key if it's an array key.
+            LastArrayKey = Key
+          else
+            Key = "[" .. ScalarToStr(Key) .. "]"
+          end
         end
+        if type(Val) == "table" then
+          Val = TblToStr(Val, Seen)
+        else
+          Val = ScalarToStr(Val)
+        end
+        Ret[#Ret + 1] =
+          (type(Key) == "string"
+            and (Key .. "= ") -- Explicit key.
+            or "") -- Implicit array key.
+          .. Val
       end
-      if type(Val) == "table" then
-        Val = TblToStr(Val, Seen)
-      else
-        Val = ScalarToStr(Val)
-      end
-      Ret[#Ret + 1] =
-        (type(Key) == "string"
-          and (Key .. "= ") -- Explicit key.
-          or "") -- Implicit array key.
-        .. Val
     end
  --   Ret = "{\n" .. table.concat(Ret, ", ") .. "\n}"
     Ret = "{" .. table.concat(Ret, ", ") .. "}"

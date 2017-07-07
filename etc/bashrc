@@ -7,9 +7,12 @@ export LESS='-R'
 export LESSOPEN='|$Here/etc/lessfilter %s'
 
 load() { ## reload environment ## shell
- . $Here/etc/dotbashrc
+ . $Here/etc/bashrc
 }
 installation() { ## install DARE (need only be run once) ## install
+  if [ "$(uname)" == "Darwin" ]; then
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
   sudo easy_install Pygments
   for f in lua luajit vim git make gawk htop ranger asciiquarium cmatrix ; do
     if which $f; then true; else 
@@ -26,13 +29,13 @@ installation() { ## install DARE (need only be run once) ## install
   done
   if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
     git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
-    vim -u "$Here/etc/dotvimrc" -c 'PluginInstall' -c 'qa!'
+    vim -u "$Here/etc/vimrc" -c 'PluginInstall' -c 'qa!'
   fi
   gitting
   timm
 }
 vi() { ## edit files using the DARE config stuff ## shell
-    vim -u "$Here/etc/dotvimrc" $*
+    vim -u "$Here/etc/vimrc" $*
     echo "Done!"
 }
 ok() { ## 'ok X' is shorthand for lua Xok.lua ## shell
@@ -65,7 +68,7 @@ copyright() { ## show copyright notice ## misc
 help() { ## show help ## misc
   echo "${blue}"
   echo "Options:"
-  grep '##' $Here/etc/dotbashrc | 
+  grep '##' $Here/etc/bashrc | 
   sort -t\# -k 5  | 
   grep -v 'grep' |
   gawk 'BEGIN { FS="#"}  
@@ -134,11 +137,11 @@ twins() { ## generate source code and unit test files ## shell
   git add ${f}ok.lua
   wc ${f}.lua ${f}ok.lua
 }
-norman() { ## about Norman Vaughan ## shell
+norman() { ## about Norman Vaughan ## misc
   cat<<-EOF | fmt -60
-
-  "Dream big and dare to fail"  
-   -- Norman Vaughan
+  
+	"Dream big and dare to fail."   
+	 -- Norman Vaughan
 
 	Norman Vaughan was born on December 19, 1905, in Salem, Massachusetts,
 	as the son of a wealthy leather tanner and shoe manufacturer.
