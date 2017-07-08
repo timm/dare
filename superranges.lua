@@ -53,37 +53,38 @@ return function (lst,x,y)
   --------------------------------------------
   local function data(j) return ranges[j]._all._all end
   --------------------------------------------
-  local function memo(here,stop,inc,_memo,    b4)
-    if not _memo[here] then 
-      if here ~= stop then 
-        b4= memo(here+inc, stop, inc, _memo) end
-      _memo[here] = num.updates(data(here), y, b4) 
-    end
-    return copy(_memo[here]) end
+  local function memo(here,stop,_memo,    b4,inc)
+    if stop > here then inc=1 else inc=-1 end
+    if here ~= stop then 
+       b4= copy( memo(here+inc, stop, _memo)) end
+    _memo[here] = num.updates(data(here), y, b4)
+    return _memo[here] end
   --------------------------------------------
-  local function combine(lo,hi,all,bin,lvl)
+  local function combine(lo,hi,all,bin,lvl)   
     local best= all.sd
-    local lmemo, rmemo= {},{}
-    local l,r,cut
+    local lmemo,rmemo = {},{}
+    memo(hi,lo, lmemo)
+    memo(lo,hi, rmemo)
+    local cut, lbest, rbest
     for j=lo,hi-1 do
-      local l0 = memo(j,   lo, -1, lmemo)
-      local r0 = memo(j+1, hi,  1, rmemo)
-      local tmp= l0.n/all.n*l0.sd + r0.n/all.n*r0.sd
+      local l = lmemo[j]
+      local r = rmenu[j+1]
+      local tmp= l.n/all.n*l.sd + r.n/all.n*r.sd
       if (tmp*1.01 < best) then
         cut  = j
         best = tmp
-        l = copy(l0)
-        r = copy(r0)
+        lbest = copy(l)
+        rbest = copy(r)
     end end
     if cut then
-      bin = combine(lo,  cut,lbest,bin,lvl+1)
-      bin = combine(cut+1,hi,rbest,bin,lvl+1)
+      bin = combine(lo,   cut, lbest, bin, lvl+1) + 1
+      bin = combine(cut+1, hi, rbest, bin, lvl+1)
     else
       for j in lo,hi do
         ranges[j].bin = bin end end 
     return bin end 
   --------------------------------------------
   combine(1,#ranges, 
-           xpect(1,#ranges),
+           memo(1,#ranges,{}),
            1,0) 
   return ranges end
