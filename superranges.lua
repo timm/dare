@@ -49,34 +49,41 @@ local num=require "num"
 local range=require "range"
 -----------------------------------------------
 return function (lst,x,y)
-  local function xpect(lo,hi)
-    out= num.create()
-    for j=lo,hi do
-      num.updates(ranges[j]._all._all, y) end
-    return out end
+  local ranges = range(lst,x)
+  --------------------------------------------
+  local function data(j) return ranges[j]._all._all end
+  --------------------------------------------
+  local function memo(here,stop,inc,_memo,    b4)
+    if not _memo[here] then 
+      if here ~= stop then 
+        b4= memo(here+inc, stop, inc, _memo) end
+      _memo[here] = num.updates(data(here), y, b4) 
+    end
+    return copy(_memo[here]) end
   --------------------------------------------
   local function combine(lo,hi,all,bin,lvl)
-    local lbest,rbest,cut
     local best= all.sd
+    local lmemo, rmemo= {},{}
+    local l,r,cut
     for j=lo,hi-1 do
-      local l  = xpect(lo,  j, y,ranges)
-      local r  = xpect(j+1,hi, y,ranges)
-      local tmp= l.n/all.n*l.sd + r.n/all.n*r.sd
+      local l0 = memo(j,   lo, -1, lmemo)
+      local r0 = memo(j+1, hi,  1, rmemo)
+      local tmp= l0.n/all.n*l0.sd + r0.n/all.n*r0.sd
       if (tmp*1.01 < best) then
         cut  = j
         best = tmp
-        lbest = copy(l)
-        rbest = copy(r)
+        l = copy(l0)
+        r = copy(r0)
     end end
     if cut then
-      bin= combine(lo,  cut,lbest,bin,lvl+1)
-      bin= combine(cut+1,hi,rbest,bin,lvl+1)
+      bin = combine(lo,  cut,lbest,bin,lvl+1)
+      bin = combine(cut+1,hi,rbest,bin,lvl+1)
     else
       for j in lo,hi do
         ranges[j].bin = bin end end 
     return bin end 
   --------------------------------------------
-  local ranges = range(lst,x)
-  return combine(1,#ranges, 
-                 xpect(1,#ranges),
-                 1,0) end
+  combine(1,#ranges, 
+           xpect(1,#ranges),
+           1,0) 
+  return ranges end
