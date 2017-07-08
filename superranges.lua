@@ -61,10 +61,10 @@ return function (lst,x,y)
     return _memo[here] end
   --------------------------------------------
   local function combine(lo,hi,all,bin,lvl)   
-    local best= all.sd
+    local best = all.sd
     local lmemo,rmemo = {},{}
-    memo(hi,lo, lmemo)
-    memo(lo,hi, rmemo)
+    memo(hi,lo, lmemo) -- summarize i+1 using i
+    memo(lo,hi, rmemo) -- summarize i using i+1
     local cut, lbest, rbest
     for j=lo,hi-1 do
       local l = lmemo[j]
