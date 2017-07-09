@@ -30,7 +30,7 @@ local function collect(t,f)
     for i,v in pairs(t) do out[i] = f(v) end end
   return out end
 
-  local function copy(t)  --recursive       
+local function copy(t)  --recursive       
   return type(t) ~= 'table' and t or collect(t,copy) end
 
 -------------------------------------------------------

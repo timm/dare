@@ -1,15 +1,10 @@
 #!/bin/bash
 # -*- sh -*-
 
-alias ls='ls -G'
-
-export LESS='-R'
-export LESSOPEN='|$Here/etc/lessfilter %s'
-
-load() { ## reload environment ## shell
+load() { ## ## reload environment ## shell
  . $Here/etc/bashrc
 }
-installation() { ## install DARE (need only be run once) ## install
+install() { ## ## install DARE (need only be run once) ## install
   if [ "$(uname)" == "Darwin" ]; then
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
@@ -34,23 +29,26 @@ installation() { ## install DARE (need only be run once) ## install
   gitting
   timm
 }
-vi() { ## edit files using the DARE config stuff ## shell
+vi() { ## FILE ## edit files using the DARE config stuff ## shell
     vim -u "$Here/etc/vimrc" $*
     echo "Done!"
 }
-ok() { ## 'ok X' is shorthand for lua Xok.lua ## shell
+ok() { ## STEM ## shorthand for lua STEMok.lua ## shell
   lua ${1}ok.lua
 }
-oks() { ## run all the Xok.lua files ## shell
+show() { ## FUN ## display definition of FUN ## shell
+  type $1
+}
+oks() { ## ## run all the Xok.lua files ## shell
   lua -e "$(ls *ok.lua | gawk -F\. '{print "require \""$1"\""}')"
 }
-bye() { ## push all to on-line repo ## git
+bye() { ## ## push all to on-line repo ## git
   gitting
 	git status
 	git commit -am "saving"
  git push origin master
 }
-hi() { ## pull updates from on-line repo ## git
+hi() { ## ## pull updates from on-line repo ## git
   gitting
 	git push origin master
 }
@@ -58,28 +56,42 @@ gitting() {
 	git config --global credential.helper cache
 	git config credential.helper 'cache --timeout=3600'
 }
-timm() { ## Private: sets up this repo for timm ## install
+timm() { ## ## Private: sets up this repo for timm ## install
 	git config --global user.name "Tim Menzies"
 	git config --global user.email tim.menzies@gmail.com
 }
-copyright() { ## show copyright notice ## misc
+legal() { ## ## show copyright notice ## misc
   cat $Here/LICENSE.md
 }
-help() { ## show help ## misc
+help() { ## ## show help ## misc
   echo "${blue}"
   echo "Options:"
   grep '##' $Here/etc/bashrc | 
-  sort -t\# -k 5  | 
+  sort -t\# -k 7  | 
   grep -v 'grep' |
-  gawk 'BEGIN { FS="#"}  
-          { pre=  $5==last ? "      " : toupper($5)":\n            "
-            line = $5==last ? "" : b b b    
-            last=$5 
+  gawk '  function trim(x) {
+            sub(/^[ \t]*/,"",x)
+            sub(/[ \t]*$/,"",x)
+            return x
+          }
+           BEGIN  { FS="##" }  
+          /BEGIN/ { next    }
+          { for(i=1;i<=NF;i++)
+               $i=trim($i)
+            pad="         "
+            pre=  $NF==last ? pad : toupper($NF)":\n" pad
+            last=$NF 
             gsub(/[(){]/,"",$1)
-            printf("%-12s%-15s%s\n",pre,$1,$3)}'
+            opts= NF==4 ? $2 : ""
+            text= NF==4 ? $3 : $2
+            printf("%s%-8s%-10s%s\n",pre,$1,opts,text)}
+              '
   echo -n "${white}"
 }
-make() { ## run any Makefile at the root of this repo ## shell
+quit() { ## ## exit ## shell
+  exit
+}
+make() { ## [OPTS] ## run any Makefile at the root of this repo ## shell
   root=$(git rev-parse --show-toplevel)
   if [ -n "$root" ]; then
     ( cd $root; _make1 $*)
@@ -112,7 +124,7 @@ local the=require "config"
 	
 EOF
 }
-twins() { ## generate source code and unit test files ## shell
+twins() { ## STEM ## makes STEM.lua and unit test file STEMok.lua ## shell
   f=$(basename $1 ".lua")
   if [ ! -f "${f}.lua" ]; then 
 	   _twins1 $f utilities  > ${f}.lua
@@ -137,7 +149,7 @@ twins() { ## generate source code and unit test files ## shell
   git add ${f}ok.lua
   wc ${f}.lua ${f}ok.lua
 }
-norman() { ## about Norman Vaughan ## misc
+norman() { ## ## about Norman Vaughan ## misc
   cat<<-EOF | fmt -60
   
 	"Dream big and dare to fail."   
@@ -179,30 +191,39 @@ norman() { ## about Norman Vaughan ## misc
 	some close friends were with him.
 	EOF
 }
-_c1="\[\033[01;32m\]"
-_c2="\[\033[01;34m\]"
-_c3="\[\033[31m\]"
-_c6="\033[33m"
-_c5="\[\033[35m\]$"
-_c0="\[\033[00m\]"
-_c7="[\033]01;19\]"
-red=$(tput setaf 1)
-blue=$(tput setaf 6)
-ltyl=$(tput setaf 11)
-white=$(tput setaf 15)
 here() { cd $1; basename "$PWD"; }
-PROMPT_COMMAND='echo  -ne "${_c6}DARE> \033]0; $(here ../..)/$(here ..)/$(here .)\007";PS1="$_c1$(here ../..)/$_c2$(here ..)/$_c3$(here .) ${_c6}\!>${_c0}\e[m "'
-  
-echo -n "${ltyl}" 
 
-cat <<'EOF'
+setup() {
+  alias ls='ls -G'
+  export LESS='-R'
+  export LESSOPEN='|$Here/etc/lessfilter %s'
+  Tag="DARE"
+  _c1="\[\033[01;32m\]"
+  _c2="\[\033[01;34m\]"
+  _c3="\[\033[31m\]"
+  _c6="\033[33m"
+  _c5="\[\033[35m\]$"
+  _c0="\[\033[00m\]"
+  _c7="[\033]01;19\]"
+  red=$(tput setaf 1)
+  blue=$(tput setaf 6)
+  ltyl=$(tput setaf 11)
+  white=$(tput setaf 15)
+}
+promptcom() {
+   PROMPT_COMMAND='echo  -ne "${_c6}${Tag}> \033]0; $(here ../..)/$(here ..)/$(here .)\007";PS1="${_c1} $(here ../..)/$_c2$(here ..)/$_c3$(here .) ${_c6}\!>${_c0}\e[m "'
+} 
+banner() {
+  echo -n "${ltyl}" 
+
+  cat <<'EOF'
 
  +                       |  Lua Dare v1.00                  
         _.--"~~ __"-.  . |  https://github.com/timm/dare       
  .   ,-"     .-~  ~"-\   | 
    .^       /       ( )  |  A little Lua goes a long way.
   /    .  Y              |     
- /      \_j       .      |  "Dream big and dare to fail"
+ /      \_j       .      |  "Dream big and dare to fail."
 Y     ( --l__            |   -- Norman Vaughan
 |            "-.                            
 |      (___     \             
@@ -216,7 +237,13 @@ l        _)
            "--.._____.^  -- Row     
 EOF
 echo -n "${white}"
-help
+}
+
+setup
+promptcom
 if [ -f "$HOME/.config/dare/config" ]; then
-  . "$HOME/config/dare/config"
+  . "$HOME/.config/dare/config"
 fi
+banner
+help
+

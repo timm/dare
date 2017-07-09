@@ -57,7 +57,7 @@ local function create() return {
 ----------------------------------
 local function update(i,one, x)
   if x ~= the.ignore then
-    some.update(i._all,x)
+    some.update(i._all, one)
     i.n = i.n + 1
     if x > i.hi then i.hi = x  end
     if x < i.lo then i.lo = x  end
@@ -74,7 +74,8 @@ local function rangeManager(lst, x)
     cohen = the.chop.cohen,
     m     = the.chop.m,
     size  = #lst,
-    ranges= {} }
+    ranges= {} 
+  }
   _.enough = _.size^_.m
   nextRange(_)
   _.num = num.updates(lst, _.x)

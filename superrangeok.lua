@@ -45,14 +45,27 @@ POSSIBILITY OF SUCH DAMAGE.
 
 require "show"
 local the=require "config"
-	
 local o=require "tests"	
 local r=require "random"
-local x=require "superranges"
- 
+local range=require "range"
+local super=require "superrange"
+local num=require "num"
+----------------------------------------------
+local function x(z) return z[1] end
+local function y(z) return z[#z] end
+local function klass(z) 
+  if z < 0.23 then return  9 + 2*r.r()/100 end
+  if z < 0.76 then return 19 + 2*r.r()/100 end
+  return                  29 + 2*r.r()/100 end
+----------------------------------------------
 local function _test1()
-        	assert(true)
+  local lst,n={},num.create()
+  for _=1,100000 do
+    local w=r.r()^2
+    num.update(n,klass(w))
+    lst[#lst+1] = {w, klass(w)} end
+  print( super(lst,x,y))
 end
-
+----------------------------------------------
 r.seed(1)
 o.k{_test1}

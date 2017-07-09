@@ -47,16 +47,19 @@ require "show"
 local the=require "config"
 local num=require "num"
 local range=require "range"
+local copy=(require "lists").copy
 -----------------------------------------------
 return function (lst,x,y)
-  local ranges = range(lst,x)
+  y = y or function(j) return j[#j] end
+  local breaks,ranges = {},range(lst,x)
   --------------------------------------------
   local function data(j) return ranges[j]._all._all end
+  local function same(j) return j end
   --------------------------------------------
   local function memo(here,stop,_memo,    b4,inc)
     if stop > here then inc=1 else inc=-1 end
     if here ~= stop then 
-       b4= copy( memo(here+inc, stop, _memo)) end
+       b4=  copy( memo(here+inc, stop, _memo)) end
     _memo[here] = num.updates(data(here), y, b4)
     return _memo[here] end
   --------------------------------------------
@@ -68,8 +71,9 @@ return function (lst,x,y)
     local cut, lbest, rbest
     for j=lo,hi-1 do
       local l = lmemo[j]
-      local r = rmenu[j+1]
+      local r = rmemo[j+1]
       local tmp= l.n/all.n*l.sd + r.n/all.n*r.sd
+      -- print(string.rep("|.. ",lvl), {j=j,bin=bin,cut=l.hi, tmp=tmp})
       if (tmp*1.01 < best) then
         cut  = j
         best = tmp
@@ -80,11 +84,13 @@ return function (lst,x,y)
       bin = combine(lo,   cut, lbest, bin, lvl+1) + 1
       bin = combine(cut+1, hi, rbest, bin, lvl+1)
     else
-      for j in lo,hi do
-        ranges[j].bin = bin end end 
+      breaks[bin] = breaks[bin] or -10^32
+      if ranges[hi].hi > breaks[bin] then
+          breaks[bin] = ranges[hi].hi  end end
     return bin end 
   --------------------------------------------
   combine(1,#ranges, 
            memo(1,#ranges,{}),
-           1,0) 
-  return ranges end
+           1,0)  
+  table.sort(breaks)
+  return breaks end
