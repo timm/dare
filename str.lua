@@ -57,4 +57,4 @@ local function sayln(control, ...)
 local function replace_char(pos, str, r)
     return str:sub(1, pos-1) .. r .. str:sub(pos+1) end
 
-return {say=say,fmt=fmt,sayln=sayln}
+return {say=say,fmt=fmt,sayln=sayln,replace_char=replace_char}

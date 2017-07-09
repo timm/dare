@@ -48,13 +48,15 @@ local the=require "config"
 local num=require "num"
 local range=require "range"
 local copy=(require "lists").copy
+local str=require "str"
+
 local function labels(nums)
   local out={}
   for i =1,#nums do
     local label= string.char(64+ i)
     local base = string.rep("_",#nums)
-    out[#out+1] =  {name  = nums[i], 
-                    label=replace_char(i,base,label)} end 
+    out[#out+1] =  {most  = nums[i], 
+                    label=str.replace_char(i,base,label)} end 
   return out end
 local function same(j) return j end
 -----------------------------------------------
@@ -100,4 +102,4 @@ return function (lst,x,y)
            memo(1,#ranges,{}),
            1,0)  
            -- table.sort(breaks)
-  return breaks end
+  return labels(breaks) end
