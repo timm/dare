@@ -54,4 +54,7 @@ local function say(control, ...)
 local function sayln(control, ...)
   return io.write(string.format(control.."\n", unpack{...})) end
 
+local function replace_char(pos, str, r)
+    return str:sub(1, pos-1) .. r .. str:sub(pos+1) end
+
 return {say=say,fmt=fmt,sayln=sayln}

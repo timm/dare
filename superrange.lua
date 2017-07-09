@@ -48,13 +48,21 @@ local the=require "config"
 local num=require "num"
 local range=require "range"
 local copy=(require "lists").copy
+local function labels(nums)
+  local out={}
+  for i =1,#nums do
+    local label= string.char(64+ i)
+    local base = string.rep("_",#nums)
+    out[#out+1] =  {name  = nums[i], 
+                    label=replace_char(i,base,label)} end 
+  return out end
+local function same(j) return j end
 -----------------------------------------------
 return function (lst,x,y)
   y = y or function(j) return j[#j] end
   local breaks,ranges = {},range(lst,x)
   --------------------------------------------
   local function data(j) return ranges[j]._all._all end
-  local function same(j) return j end
   --------------------------------------------
   local function memo(here,stop,_memo,    b4,inc)
     if stop > here then inc=1 else inc=-1 end
@@ -73,7 +81,6 @@ return function (lst,x,y)
       local l = lmemo[j]
       local r = rmemo[j+1]
       local tmp= l.n/all.n*l.sd + r.n/all.n*r.sd
-      -- print(string.rep("|.. ",lvl), {j=j,bin=bin,cut=l.hi, tmp=tmp})
       if (tmp*1.01 < best) then
         cut  = j
         best = tmp
@@ -92,5 +99,5 @@ return function (lst,x,y)
   combine(1,#ranges, 
            memo(1,#ranges,{}),
            1,0)  
-  table.sort(breaks)
+           -- table.sort(breaks)
   return breaks end

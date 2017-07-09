@@ -52,7 +52,7 @@ local range=require "range"
  
 local function _test1()
     tmp={}
-    for x=1,1000000 do
+    for x=1,10^6 do
       tmp[#tmp+1] = r.r()^0.5 end
     for i,k in pairs(range(tmp)) do
       print(i,k) end

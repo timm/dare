@@ -60,8 +60,8 @@ local function klass(z)
 ----------------------------------------------
 local function _test1()
   local lst,n={},num.create()
-  for _=1,100000 do
-    local w=r.r()^2
+  for _=1,10^5 do
+    local w=r.r()^0.5
     num.update(n,klass(w))
     lst[#lst+1] = {w, klass(w)} end
   print( super(lst,x,y))

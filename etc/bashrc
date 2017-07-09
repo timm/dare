@@ -34,13 +34,13 @@ vi() { ## FILE ## edit files using the DARE config stuff ## shell
     echo "Done!"
 }
 ok() { ## STEM ## shorthand for lua STEMok.lua ## shell
-  lua ${1}ok.lua
+  luajit ${1}ok.lua
 }
 show() { ## FUN ## display definition of FUN ## shell
   type $1
 }
 oks() { ## ## run all the Xok.lua files ## shell
-  lua -e "$(ls *ok.lua | gawk -F\. '{print "require \""$1"\""}')"
+  luajit -e "$(ls *ok.lua | gawk -F\. '{print "require \""$1"\""}')"
 }
 bye() { ## ## push all to on-line repo ## git
   gitting
@@ -194,6 +194,7 @@ norman() { ## ## about Norman Vaughan ## misc
 here() { cd $1; basename "$PWD"; }
 
 setup() {
+  alias Lua=$(which luajit)
   alias ls='ls -G'
   export LESS='-R'
   export LESSOPEN='|$Here/etc/lessfilter %s'

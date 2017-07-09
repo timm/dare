@@ -25,17 +25,6 @@ local function globals()
     --if type(v) ~= 'function' then  
        if not builtin[k] then 
          print("-- Global: " .. k) end end end --end
-
-local function functionName(z)
-  for k,v in pairs(_G) do
-    if v==z then return k end end 
-  local k = zwhile true do
-    a=a+1
-    local k, value = debug.getlocal(1, a)
-    if not k   then return nil end
-    if value == x then return k end
-    a = a + 1 end 
-end  
 ------------------------------------------------------
 local function tests(t)
   for s,x in pairs(t) do  
