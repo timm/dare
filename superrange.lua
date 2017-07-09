@@ -48,18 +48,19 @@ local the=require "config"
 local num=require "num"
 local range=require "range"
 local copy=(require "lists").copy
-local str=require "str"
-
+local replace=(require "str").replace_char
+--------------------------------------------
 local function labels(nums)
   local out={}
   for i =1,#nums do
-    local label= string.char(64+ i)
-    local base = string.rep("_",#nums)
-    out[#out+1] =  {most  = nums[i], 
-                    label=str.replace_char(i,base,label)} end 
+    out[#out+1] =  {
+      most  = nums[i], 
+      label  =replace(i,string.rep("_",#nums),
+                        string.char(64+i))} end 
   return out end
+--------------------------------------------
 local function same(j) return j end
------------------------------------------------
+--------------------------------------------
 return function (lst,x,y)
   y = y or function(j) return j[#j] end
   local breaks,ranges = {},range(lst,x)
