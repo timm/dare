@@ -45,13 +45,11 @@ EOF
   timm
 }
 locco() {
-  if [ "$Here/$1" -nt "$Here/docs/$1" ]; then
-    (cd $Here/etc/locco
-    ./locco.lua ../../$1)
-    git add $Here/docs
-    git add $Here/docs/*.html
-    git add $Here/docs/*.css
-  fi
+   (cd $Here/etc/locco
+   ./locco.lua ../../$1)
+   git add $Here/docs
+   git add $Here/docs/*.html
+   git add $Here/docs/*.css
 }
 vi() { ## FILE ## edit files using the DARE config stuff ## shell
     vim -u "$Here/etc/vimrc" $*
