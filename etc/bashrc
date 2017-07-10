@@ -26,8 +26,32 @@ install() { ## ## install DARE (need only be run once) ## install
     git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
     vim -u "$Here/etc/vimrc" -c 'PluginInstall' -c 'qa!'
   fi
+  if [ ! -f "$Here/.gitignore" ]; then
+     cat <<EOF > "$Here/.gitignore"
+#vimstuff
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+netrwhist
+*~
+locco
+EOF
+  fi
+  if [ ! -d "$Here/etc/locco" ]; then
+    git clone https://github.com/rgieseke/locco etc/locco
+  fi
   gitting
   timm
+}
+locco() {
+  if [ "$Here/$1" -nt "$Here/docs/$1" ]; then
+    (cd $Here/etc/locco
+    ./locco.lua ../../$1)
+    git add $Here/docs
+    git add $Here/docs/*.html
+    git add $Here/docs/*.css
+  fi
 }
 vi() { ## FILE ## edit files using the DARE config stuff ## shell
     vim -u "$Here/etc/vimrc" $*
