@@ -5,4 +5,7 @@
 Session.vim
 .netrwhist
 *~
+# doc stuff
 locco
+# mac stuff
+.DS_Store

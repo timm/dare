@@ -35,7 +35,10 @@ install() { ## ## install DARE (need only be run once) ## install
 Session.vim
 netrwhist
 *~
+# doc stuff
 locco
+# mac stuff
+.DS_Store
 EOF
   fi
   if [ ! -d "$Here/etc/locco" ]; then
@@ -241,8 +244,8 @@ banner() {
 
   cat <<'EOF'
 
- +                       |  Lua Dare v1.00                  
-        _.--"~~ __"-.  . |  https://github.com/timm/dare       
+ +                       |  Lua Lure v1.00                  
+        _.--"~~ __"-.  . |  https://github.com/lualure/info       
  .   ,-"     .-~  ~"-\   | 
    .^       /       ( )  |  A little Lua goes a long way.
   /    .  Y              |     
