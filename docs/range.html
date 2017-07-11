@@ -29,50 +29,16 @@
     <a class="pilcrow" href="#section-1">&#182;</a>
   </div>
   
-<p>[[</p>
+<h1>range : simple discretiation</h1>
+<p>View the <a href="../range.lua">source on-line</a>.</p>
 
 
 </td>
 <td class="code">
-  <div class="highlight"><pre>
-# range : unsupervised discretiation
-
-DARE, Copyright (c) 2017, Tim Menzies
-All rights reserved, BSD 3-Clause License
-
-Redistribution <span class="o">and</span> use <span class="k">in</span> source <span class="o">and</span> binary forms, with
-<span class="o">or</span> without modification, are permitted provided that
-the following conditions are met:
-
-* Redistributions of source code must retain the above
-  copyright notice, this list of conditions <span class="o">and</span> the 
-  following disclaimer.
-
-* Redistributions <span class="k">in</span> binary form must reproduce the
-  above copyright notice, this list of conditions <span class="o">and</span> the 
-  following disclaimer <span class="k">in</span> the documentation <span class="o">and</span>/<span class="o">or</span> other 
-  materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names 
-  of its contributors may be used to endorse <span class="o">or</span> promote 
-  products derived from this software without specific 
-  prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-CONTRIBUTORS <span class="s">"AS IS"</span> AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
-THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
-IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+  <div class="highlight"><pre><span class="nt">require</span> <span class="s">"show"</span>
+<span class="k">local</span> the=<span class="nt">require</span> <span class="s">"config"</span>
+<span class="k">local</span> num=<span class="nt">require</span> <span class="s">"num"</span>
+<span class="k">local</span> some=<span class="nt">require</span> <span class="s">"sample"</span>
 </pre></div>
 </td>
 </tr><tr id="section-2">
@@ -82,38 +48,7 @@ POSSIBILITY OF SUCH DAMAGE.
   </div>
   
 <hr/>
-
-
-</td>
-<td class="code">
-  <div class="highlight"><pre>
-</pre></div>
-</td>
-</tr><tr id="section-3">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-3">&#182;</a>
-  </div>
-  
-<p>]]</p>
-
-
-</td>
-<td class="code">
-  <div class="highlight"><pre>
-<span class="nt">require</span> <span class="s">"show"</span>
-<span class="k">local</span> the=<span class="nt">require</span> <span class="s">"config"</span>
-<span class="k">local</span> num=<span class="nt">require</span> <span class="s">"num"</span>
-<span class="k">local</span> some=<span class="nt">require</span> <span class="s">"sample"</span>
-</pre></div>
-</td>
-</tr><tr id="section-4">
-<td class="docs">
-  <div class="pilwrap">
-    <a class="pilcrow" href="#section-4">&#182;</a>
-  </div>
-  
-<hr/>
+<p>Initialize a table for range info</p>
 
 
 </td>
@@ -126,13 +61,16 @@ POSSIBILITY OF SUCH DAMAGE.
   span = 2^64} <span class="k">end</span>
 </pre></div>
 </td>
-</tr><tr id="section-5">
+</tr><tr id="section-3">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-5">&#182;</a>
+    <a class="pilcrow" href="#section-3">&#182;</a>
   </div>
   
 <hr/>
+<p>Update range  <em>i</em>  with
+some numuerc <em>x</em> found from within
+<em>one</em>.</p>
 
 
 </td>
@@ -147,13 +85,17 @@ POSSIBILITY OF SUCH DAMAGE.
     <span class="k">return</span> x <span class="k">end</span>  <span class="k">end</span>
 </pre></div>
 </td>
-</tr><tr id="section-6">
+</tr><tr id="section-4">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-6">&#182;</a>
+    <a class="pilcrow" href="#section-4">&#182;</a>
   </div>
   
 <hr/>
+<p>Update range manager <em>i</em> with
+a new range <em>i.now</em>. Push that
+range onto the list of all ranges
+<em>i.ranges</em>.</p>
 
 
 </td>
@@ -163,13 +105,14 @@ POSSIBILITY OF SUCH DAMAGE.
   i.ranges[#i.ranges+1] = i.now <span class="k">end</span>
 </pre></div>
 </td>
-</tr><tr id="section-7">
+</tr><tr id="section-5">
 <td class="docs">
   <div class="pilwrap">
-    <a class="pilcrow" href="#section-7">&#182;</a>
+    <a class="pilcrow" href="#section-5">&#182;</a>
   </div>
   
 <hr/>
+<p>Initialize a range maneger,</p>
 
 
 </td>
@@ -180,13 +123,39 @@ POSSIBILITY OF SUCH DAMAGE.
     cohen = the.chop.cohen,
     m     = the.chop.m,
     size  = #lst,
-    ranges= {} 
-  }
-  _.enough = _.size^_.m
+    ranges= {} <span class="c">-- list of all known ranges 
+</span>  }
+</pre></div>
+</td>
+</tr><tr id="section-6">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-6">&#182;</a>
+  </div>
+  
+<p>Breaks holding under <em>enough</em> are ignored.</p>
+
+
+</td>
+<td class="code">
+  <div class="highlight"><pre>  _._.enough = _.size^_.m
   nextRange(_)
   _.num = num.updates(lst, _.x)
-  _.hi     = _.num.hi
-  _.epsilon= _.num.sd * _.cohen
+  _.hi  = _.num.hi
+</pre></div>
+</td>
+</tr><tr id="section-7">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-7">&#182;</a>
+  </div>
+  
+<p>Breaks smaller than <em>epsilon</em> are ignored.</p>
+
+
+</td>
+<td class="code">
+  <div class="highlight"><pre>  _._.epsilon= _.num.sd * _.cohen
   <span class="k">return</span> _ <span class="k">end</span>
 </pre></div>
 </td>
@@ -197,13 +166,24 @@ POSSIBILITY OF SUCH DAMAGE.
   </div>
   
 <hr/>
+<p>Return a function that </p>
+
+<ul>
+    <li>Sorts a <em>lst</em> of
+    items according to the values found by
+    the function <em>x</em>.</li>
+    <li>Then divides that sort into <em>ranges</em>
+    of size of at least <em>enough</em> which
+    break the <em>lst</em> into items of at least
+    <em>epsilon</em> in size.</li>
+</ul>
 
 
 </td>
 <td class="code">
   <div class="highlight"><pre><span class="k">return</span> <span class="k">function</span> (lst, x,       last)
-  x= x <span class="o">or</span> <span class="k">function</span> (z) <span class="k">return</span> z <span class="k">end</span>
-  table.sort(lst, <span class="k">function</span> (z1,z2) <span class="k">return</span> x(z1) &lt; x(z2) <span class="k">end</span>)
+  x= x <span class="o">or</span> <span class="k">function</span> (z) <span class="k">return</span> z <span class="k">end</span> <span class="c">-- _x_ defaults to the identity
+</span>  table.sort(lst, <span class="k">function</span> (z1,z2) <span class="k">return</span> x(z1) &lt; x(z2) <span class="k">end</span>)
   <span class="k">local</span> i= rangeManager(lst, x)
   <span class="k">for</span> j,one <span class="k">in</span> <span class="nt">pairs</span>(lst) <span class="k">do</span>
     <span class="k">local</span> x1 = update(i.now, one, x(one))
@@ -217,6 +197,59 @@ POSSIBILITY OF SUCH DAMAGE.
     last = x1 
   <span class="k">end</span> 
   <span class="k">return</span> i.ranges <span class="k">end</span>
+</pre></div>
+</td>
+</tr><tr id="section-9">
+<td class="docs">
+  <div class="pilwrap">
+    <a class="pilcrow" href="#section-9">&#182;</a>
+  </div>
+  
+<hr/>
+<h2>Copyleft</h2>
+
+<p>This file is part of LURE, Copyright (c) 2017, Tim Menzies
+All rights reserved, BSD 3-Clause License</p>
+
+<p>Redistribution and use in source and binary forms, with
+or without modification, are permitted provided that
+the following conditions are met:</p>
+
+<ul>
+    <li><p>Redistributions of source code must retain the above
+    copyright notice, this list of conditions and the 
+    following disclaimer.</p></li>
+    <li><p>Redistributions in binary form must reproduce the
+    above copyright notice, this list of conditions and the 
+    following disclaimer in the documentation and/or other 
+    materials provided with the distribution.</p></li>
+    <li><p>Neither the name of the copyright holder nor the names 
+    of its contributors may be used to endorse or promote 
+    products derived from this software without specific 
+    prior written permission.</p></li>
+</ul>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</p>
+
+
+</td>
+<td class="code">
+  <div class="highlight"><pre>
+
 </pre></div>
 </td>
 </tr></tbody>

@@ -216,8 +216,8 @@ norman() { ## ## about Norman Vaughan ## misc
 here() { cd $1; basename "$PWD"; }
 
 setup() {
-  alias Lua=$(which luajit)
-  alias ls='ls -G'
+  alias lua="LUA_PATH=\"$Here/src/?.lua;$Here/tests/?.lua;;\" $(which luajit) "
+  lias ls='ls -G'
   export LESS='-R'
   export LESSOPEN='|$Here/etc/lessfilter %s'
   Tag="DARE"
